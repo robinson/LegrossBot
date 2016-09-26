@@ -12,6 +12,7 @@ namespace Legross
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            //QueueConnector.Initialize();
         }
     }
 }
