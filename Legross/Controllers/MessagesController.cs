@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Microsoft.Bot.Builder.Dialogs;
 using Legross.Dialogs;
 using Microsoft.ServiceBus.Messaging;
+using Legross.Hubs;
+using Microsoft.AspNet.SignalR;
 
 namespace Legross
 {
@@ -21,26 +23,22 @@ namespace Legross
         /// Receive a message from a user and reply to it
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
-        {
-            //if (activity.Type == ActivityTypes.Message)
-            //{
-            //    await Conversation.SendAsync(activity, () => new LegrossBotDialog());
-            //}
-            //else
-            //{
-            //    ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            //    var reply = HandleSystemMessage(activity);
-            //    if (reply != null)
-            //        await connector.Conversations.ReplyToActivityAsync(reply);
-            //}
-            //var response = Request.CreateResponse(HttpStatusCode.OK);
-            //return response;
+        {  
             if (activity.Type == ActivityTypes.Message)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
                 // calculate something for us to return
                 int length = (activity.Text ?? string.Empty).Length;
-
+                try
+                {
+                   //send broadcast to client
+                    var context = GlobalHost.ConnectionManager.GetHubContext<MessageHub>();
+                    context.Clients.All.Send(activity.From.Name, activity.Text);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
                 // return our reply to the user
                 Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
                 await connector.Conversations.ReplyToActivityAsync(reply);
