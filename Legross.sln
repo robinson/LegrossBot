@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross", "Legross\Legross.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross.ChatClient", "Legross.ChatClient\Legross.ChatClient.csproj", "{396758AE-6B97-4F23-B796-812D77652D66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross.Audio", "Legross.Audio\Legross.Audio.csproj", "{20DB3EAE-359A-4EBE-8C80-F2B574DEECB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross.Audio.Core", "Legross.Audio.Core\Legross.Audio.Core.csproj", "{A409C591-713C-4754-8FEC-8E15C1AE6E2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{396758AE-6B97-4F23-B796-812D77652D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{396758AE-6B97-4F23-B796-812D77652D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{396758AE-6B97-4F23-B796-812D77652D66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20DB3EAE-359A-4EBE-8C80-F2B574DEECB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20DB3EAE-359A-4EBE-8C80-F2B574DEECB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20DB3EAE-359A-4EBE-8C80-F2B574DEECB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20DB3EAE-359A-4EBE-8C80-F2B574DEECB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
