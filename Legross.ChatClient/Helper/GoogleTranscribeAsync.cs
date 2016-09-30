@@ -42,7 +42,7 @@ namespace Legross.ChatClient.Helper
                 Config = new Google.Apis.CloudSpeechAPI.v1beta1.Data.RecognitionConfig()
                 {
                     Encoding = "LINEAR16",
-                    SampleRate = 16000,
+                    SampleRate = 16000,//44100
                     LanguageCode = "vi-VN"
                 },
                 Audio = new Google.Apis.CloudSpeechAPI.v1beta1.Data.RecognitionAudio()

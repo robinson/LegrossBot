@@ -87,8 +87,8 @@
       <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -121,8 +121,10 @@
       <DependentUpon>AutoTuneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoTuneViewModel.cs" />
+    <Compile Include="Extension\FocusExtension.cs" />
     <Compile Include="Helper\GoogleTranscribeAsync.cs" />
     <Compile Include="Helper\GoogleTts.cs" />
+    <Compile Include="Helper\MessageHub.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="NavigateMessage.cs" />
