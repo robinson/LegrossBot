@@ -40,6 +40,19 @@ namespace Legross.ChatClient
 
             recorder.SampleAggregator.MaximumCalculated += OnRecorderMaximumCalculated;
             Messenger.Default.Register<ShuttingDownMessage>(this, OnShuttingDown);
+
+            PrepareUI();
+        }
+        private void PrepareUI()
+        {
+            ChatPanelVisibility = false;
+            ButtonSendEnabled = false;
+            SignInPanelVisibility = true;
+            StatusVisibility = false;
+            RaisePropertyChanged("ChatPanelVisibility");
+            RaisePropertyChanged("SignInPanelVisibility");
+            RaisePropertyChanged("ButtonSendEnabled");
+            RaisePropertyChanged("StatusVisibility");
         }
 
         void OnRecorderStopped(object sender, EventArgs e)
@@ -64,8 +77,8 @@ namespace Legross.ChatClient
 
         public ICommand BeginRecordingCommand { get { return beginRecordingCommand; } }
         public ICommand StopCommand { get { return stopCommand; } }
-        public ICommand SendMessage { get { return sendMessageCommand; } }
-        public ICommand SignIn { get { return signInCommand; } }
+        public ICommand SendMessageCommand { get { return sendMessageCommand; } }
+        public ICommand SignInCommand { get { return signInCommand; } }
 
 
         public void Activated(object state)
@@ -83,20 +96,26 @@ namespace Legross.ChatClient
         }
         private void SignedIn()
         {
-            messageHub.SignIn(UserName);
-            //SignInPanelVisibility = Visibility.Collapsed;
-
-            //Show chat UI; hide login UI
-            //SignInPanel.Visibility = Visibility.Collapsed;
-            //ChatPanel.Visibility = Visibility.Visible;
-            //ButtonSend.IsEnabled = true;
-            //TextBoxMessage.Focus();
-            //RichTextBoxConsole.AppendText("Connected to server at " + ServerURI + "\r");
             StatusVisibility = true;
             StatusContent = "Connecting to server...";
-
-            RaisePropertyChanged("StatusVisibility");
             RaisePropertyChanged("StatusContent");
+            RaisePropertyChanged("StatusVisibility");
+            messageHub.SignIn(UserName);
+
+            //Show chat UI; hide login UI
+            SignInPanelVisibility = false;
+            ChatPanelVisibility = true;
+            ButtonSendEnabled = true;
+
+            RichTextBoxConsoleText = "Connected to server" + "\r";
+            
+            
+
+            RaisePropertyChanged("SignInPanelVisibility");
+            RaisePropertyChanged("ChatPanelVisibility");
+            
+            RaisePropertyChanged("ButtonSendEnabled");
+            RaisePropertyChanged("RichTextBoxConsoleText");
         }
         private void ConnectionClosed()
         {
@@ -117,6 +136,8 @@ namespace Legross.ChatClient
         public bool ButtonSendEnabled { get; set; }
         public bool ChatPanelVisibility { get; set; }
         public bool SignInPanelVisibility { get; set; }
+        
+        
 
         public string RecordedTime
         {
