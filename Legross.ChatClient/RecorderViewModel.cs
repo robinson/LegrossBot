@@ -22,11 +22,15 @@ namespace Legross.ChatClient
         private string waveFileName;
         public const string ViewName = "RecorderView";
         private MessageHub messageHub;
+        private GoogleTts Tts;
 
 
         public RecorderViewModel(IAudioRecorder recorder)
         {
             messageHub = new MessageHub();
+            messageHub.OnCallBack = (string name, string message) => OnHubCallBack(name, message);
+            messageHub.ConnectionClosed = () => OnHubClosed();
+            Tts = new GoogleTts();
 
             this.recorder = recorder;
             this.recorder.Stopped += OnRecorderStopped;
@@ -54,12 +58,27 @@ namespace Legross.ChatClient
             RaisePropertyChanged("ButtonSendEnabled");
             RaisePropertyChanged("StatusVisibility");
         }
+        private void OnHubClosed()
+        {
+            if (messageHub.Connection != null)
+            {
+                messageHub.Connection.Stop();
+                messageHub.Connection.Dispose();
 
+            }
+        }
         void OnRecorderStopped(object sender, EventArgs e)
         {
             //get text
             var s2t = GoogleTranscribeAsync.Transcribe(waveFileName);
-
+            if (s2t != null)
+            {
+                foreach (string item in s2t)
+                {
+                    ChatMessage += item;
+                }
+                RaisePropertyChanged("ChatMessage");
+            }
             //send to chat bot
 
 
@@ -80,19 +99,27 @@ namespace Legross.ChatClient
         public ICommand SendMessageCommand { get { return sendMessageCommand; } }
         public ICommand SignInCommand { get { return signInCommand; } }
 
-
+        void OnHubCallBack(string name, string message)
+        {
+            RichTextBoxConsoleText += String.Format("{0}: {1}\r", name, message);
+            RaisePropertyChanged("RichTextBoxConsoleText");
+            Tts.PlayText(name + "trả lời: "+ message);
+        }
         public void Activated(object state)
         {
             BeginMonitoring((int)state);
         }
         private void Sent()
         {
-            messageHub.Send(ChatMessage);
+            messageHub.Send("LegrossChat", ChatMessage);
             //todo: loging here
+            
+            RichTextBoxConsoleText += String.Format("{0}: {1}\r", "ChatClient", ChatMessage);
             ChatMessage = String.Empty;
             IsChatMessageFocused = true;
             RaisePropertyChanged("ChatMessage");
             RaisePropertyChanged("IsChatMessageFocused");
+            RaisePropertyChanged("RichTextBoxConsoleText");
         }
         private void SignedIn()
         {

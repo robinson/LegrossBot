@@ -3,14 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace Legross.ChatClient.Helper
+namespace Legross
 {
-    public class MessageHub
+    public class HubClient
     {
         /// <summary>
         /// This name is simply added to sent messages to identify the user; this 
@@ -29,18 +27,16 @@ namespace Legross.ChatClient.Helper
             //Connect to server (use async method to avoid blocking UI thread)
             if (!String.IsNullOrEmpty(UserName))
             {
-                //StatusText.Visibility = Visibility.Visible;
-                //StatusText.Content = "Connecting to server...";
                 ConnectAsync();
             }
         }
-        public void Send(string who, string message)
+        public void Send(string message, string who)
         {
             HubProxy.Invoke("SendChatMessage", new object[] { who, message });
         }
-        public async void ConnectAsync()
+        public void ConnectAsync()
         {
-            Connection = new HubConnection(ServerURI, "UserName=ChatClient");
+            Connection = new HubConnection(ServerURI, "UserName=LegrossChat");
             Connection.Closed += ConnectionClosed;
             HubProxy = Connection.CreateHubProxy("MessageHub");
             //Handle incoming event from server: use Invoke to write to console from SignalR's thread
@@ -55,14 +51,7 @@ namespace Legross.ChatClient.Helper
                 //No connection: Don't enable Send button or show chat UI
                 return;
             }
-
-            //Show chat UI; hide login UI
-            //SignInPanel.Visibility = Visibility.Collapsed;
-            //ChatPanel.Visibility = Visibility.Visible;
-            //ButtonSend.IsEnabled = true;
-            //TextBoxMessage.Focus();
-            //RichTextBoxConsole.AppendText("Connected to server at " + ServerURI + "\r");
+            
         }
-
     }
 }

@@ -12,36 +12,64 @@ using Legross.Dialogs;
 using Microsoft.ServiceBus.Messaging;
 using Legross.Hubs;
 using Microsoft.AspNet.SignalR;
+using System.Configuration;
 
 namespace Legross
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private ConnectorClient connector;
+        private static HubClient hubClient;
+        private static string serviceUrl;
+        private Activity act = new Activity();
+        static string ClientId = ConfigurationManager.AppSettings["ClientId"];
+        public MessagesController()
+        {
+            if (hubClient == null)
+            {
+                hubClient = new HubClient();
+                hubClient.SignIn("testAccount");
+                hubClient.OnCallBack = (string who, string message) => OnHubCallBack(who, message);
+                serviceUrl = string.Empty;
+            }
+        }
+        void OnHubCallBack(string who, string message)
+        {
+            var clientConnector = new ConnectorClient(new Uri(serviceUrl));
+            var replyMessage = act.CreateReply(message);
+            connector.Conversations.ReplyToActivityAsync(replyMessage);
+            //int length = (activity.Text ?? string.Empty).Length;
+            //Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
+            //await connector.Conversations.ReplyToActivityAsync(reply);
+        }
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
-        {  
+        {
             if (activity.Type == ActivityTypes.Message)
             {
-                ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+                act = activity;
+                serviceUrl = activity.ServiceUrl;
+                connector = new ConnectorClient(new Uri(activity.ServiceUrl));
                 // calculate something for us to return
-                int length = (activity.Text ?? string.Empty).Length;
+
                 try
                 {
-                   //send broadcast to client
-                    var context = GlobalHost.ConnectionManager.GetHubContext<MessageHub>();
-                    context.Clients.All.Send(activity.From.Name, activity.Text);
+                    //send broadcast to client
+
+                    //var context = GlobalHost.ConnectionManager.GetHubContext<MessageHub>();
+                    //context.Clients.All.SendChatMessage("ChatClient", activity.Text);
+                    hubClient.Send(activity.Text, "ChatClient");
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
                 // return our reply to the user
-                Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
-                await connector.Conversations.ReplyToActivityAsync(reply);
+                await ResponseReplyMessage(connector, activity);
             }
             else
             {
@@ -49,6 +77,12 @@ namespace Legross
             }
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
+        }
+        private async Task ResponseReplyMessage(ConnectorClient connector, Activity activity)
+        {
+            int length = (activity.Text ?? string.Empty).Length;
+            Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
+            await connector.Conversations.ReplyToActivityAsync(reply);
         }
 
         private Activity HandleSystemMessage(Activity message)
