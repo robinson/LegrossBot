@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross.Audio", "Legross.Au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross.Audio.Core", "Legross.Audio.Core\Legross.Audio.Core.csproj", "{A409C591-713C-4754-8FEC-8E15C1AE6E2F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legross.SpeechRecognition", "Legross.SpeechRecognition\Legross.SpeechRecognition.csproj", "{7128F239-5F29-4D6B-8711-8CBE96CE9275}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A409C591-713C-4754-8FEC-8E15C1AE6E2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7128F239-5F29-4D6B-8711-8CBE96CE9275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7128F239-5F29-4D6B-8711-8CBE96CE9275}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7128F239-5F29-4D6B-8711-8CBE96CE9275}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7128F239-5F29-4D6B-8711-8CBE96CE9275}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

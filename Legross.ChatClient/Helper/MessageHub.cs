@@ -21,22 +21,19 @@ namespace Legross.ChatClient.Helper
         static string ServerURI = ConfigurationManager.AppSettings["ServerURI"];
         public HubConnection Connection { get; set; }
         public Action ConnectionClosed { get; set; }
-        public Action<string, string> OnCallBack { get; set; }
+        public Action<string, string, string> OnCallBack { get; set; }
         public string StatusText { get; set; }
         public void SignIn(string userName)
         {
             UserName = userName;
-            //Connect to server (use async method to avoid blocking UI thread)
             if (!String.IsNullOrEmpty(UserName))
-            {
-                //StatusText.Visibility = Visibility.Visible;
-                //StatusText.Content = "Connecting to server...";
+            {  
                 ConnectAsync();
             }
         }
-        public void Send(string who, string message)
+        public void Send(string to, string message,string conversationId)
         {
-            HubProxy.Invoke("SendChatMessage", new object[] { who, message });
+            HubProxy.Invoke("SendChatMessage", new object[] { to, message, "ChatClient", conversationId });
         }
         public async void ConnectAsync()
         {
@@ -44,10 +41,11 @@ namespace Legross.ChatClient.Helper
             Connection.Closed += ConnectionClosed;
             HubProxy = Connection.CreateHubProxy("MessageHub");
             //Handle incoming event from server: use Invoke to write to console from SignalR's thread
-            HubProxy.On<string, string>("AddChatMessage", (who, message) => OnCallBack(who, message));
+            HubProxy.On<string, string, string>("addChatMessage", (who, message, conversationId) => OnCallBack(who, message, conversationId));
             try
             {
-                Connection.Start();
+                await Connection.Start();
+                
             }
             catch (HttpRequestException)
             {
@@ -55,13 +53,6 @@ namespace Legross.ChatClient.Helper
                 //No connection: Don't enable Send button or show chat UI
                 return;
             }
-
-            //Show chat UI; hide login UI
-            //SignInPanel.Visibility = Visibility.Collapsed;
-            //ChatPanel.Visibility = Visibility.Visible;
-            //ButtonSend.IsEnabled = true;
-            //TextBoxMessage.Focus();
-            //RichTextBoxConsole.AppendText("Connected to server at " + ServerURI + "\r");
         }
 
     }

@@ -19,7 +19,7 @@ namespace Legross
         static string ServerURI = ConfigurationManager.AppSettings["ServerURI"];
         public HubConnection Connection { get; set; }
         public Action ConnectionClosed { get; set; }
-        public Action<string, string> OnCallBack { get; set; }
+        public Action<string, string, string> OnCallBack { get; set; }
         public string StatusText { get; set; }
         public void SignIn(string userName)
         {
@@ -30,9 +30,9 @@ namespace Legross
                 ConnectAsync();
             }
         }
-        public void Send(string message, string who)
+        public void Send(string to, string message, string conversationId)
         {
-            HubProxy.Invoke("SendChatMessage", new object[] { who, message });
+            HubProxy.Invoke("SendChatMessage", new object[] { to, message, "LegrossChat", conversationId });
         }
         public void ConnectAsync()
         {
@@ -40,7 +40,7 @@ namespace Legross
             Connection.Closed += ConnectionClosed;
             HubProxy = Connection.CreateHubProxy("MessageHub");
             //Handle incoming event from server: use Invoke to write to console from SignalR's thread
-            HubProxy.On<string, string>("AddChatMessage", (who, message) => OnCallBack(who, message));
+            HubProxy.On<string, string, string>("addChatMessage", (who, message, conversationId) => OnCallBack(who, message, conversationId));
             try
             {
                 Connection.Start();

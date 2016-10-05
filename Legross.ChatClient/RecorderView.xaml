@@ -42,7 +42,8 @@
         </StackPanel>
         <StackPanel x:Name="ChatPanel" Margin="10" MaxWidth="550" Visibility="{Binding Path=ChatPanelVisibility,Converter={StaticResource BoolToVis}}">
             <Grid>
-                <TextBox x:Name="TextBoxMessage" Text="{Binding ChatMessage}" Height="20" TextWrapping="Wrap" Margin="0,0,80,0"/>
+                <!--<ComboBox x:Name="FromCombobox"  ItemsSource="{Binding FromList}" SelectedItem="{Binding SelectedReply}" IsSynchronizedWithCurrentItem="True" Width="75" Height="20" HorizontalAlignment="Left"/>-->
+                <TextBox x:Name="TextBoxMessage" Text="{Binding ChatMessage}" Height="20" TextWrapping="Wrap" Margin="0,0,80,0" HorizontalAlignment="Stretch"/>
                 <Button x:Name="ButtonSend" Command="{Binding SendMessageCommand}" Content="Send" Width="75" Height="20" IsDefault="True" IsEnabled="{Binding ButtonSendEnabled}" HorizontalAlignment="Right"/>
             </Grid>
             <TextBlock x:Name="RichTextBoxConsole" Text="{Binding RichTextBoxConsoleText}" HorizontalAlignment="Left" Height="200" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,10" ></TextBlock>

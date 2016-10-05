@@ -23,13 +23,11 @@ namespace Legross.Hubs
         private readonly static ConnectionMapping<string> _connections =
             new ConnectionMapping<string>();
 
-        public void SendChatMessage(string who, string message)
+        public void SendChatMessage(string to, string message, string from, string conversationId)
         {
-            string name = who;
-
-            foreach (var connectionId in _connections.GetConnections(who))
+            foreach (var connectionId in _connections.GetConnections(to))
             {
-                Clients.Client(connectionId).addChatMessage(name + ": " + message);
+                Clients.Client(connectionId).addChatMessage(from, message, conversationId);
             }
         }
 

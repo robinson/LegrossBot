@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Windows.Input;
-using System.IO;
 using Legross.Audio;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
 using Legross.ChatClient.Helper;
-using System.Windows;
+using System.Speech.Recognition;
 
 namespace Legross.ChatClient
 {
@@ -24,11 +23,13 @@ namespace Legross.ChatClient
         private MessageHub messageHub;
         private GoogleTts Tts;
 
+        private static string ConversationId;
+
 
         public RecorderViewModel(IAudioRecorder recorder)
         {
             messageHub = new MessageHub();
-            messageHub.OnCallBack = (string name, string message) => OnHubCallBack(name, message);
+            messageHub.OnCallBack = (string name, string message, string conversationId) => OnHubCallBack(name, message, conversationId);
             messageHub.ConnectionClosed = () => OnHubClosed();
             Tts = new GoogleTts();
 
@@ -80,7 +81,7 @@ namespace Legross.ChatClient
                 RaisePropertyChanged("ChatMessage");
             }
             //send to chat bot
-
+            //should fire sent after got the message.
 
             //Messenger.Default.Send(new NavigateMessage(SaveViewModel.ViewName,
             //    new VoiceRecorderState(waveFileName, null)));
@@ -99,8 +100,9 @@ namespace Legross.ChatClient
         public ICommand SendMessageCommand { get { return sendMessageCommand; } }
         public ICommand SignInCommand { get { return signInCommand; } }
 
-        void OnHubCallBack(string name, string message)
+        void OnHubCallBack(string name, string message, string conversationid)
         {
+            ConversationId = conversationid;
             RichTextBoxConsoleText += String.Format("{0}: {1}\r", name, message);
             RaisePropertyChanged("RichTextBoxConsoleText");
             Tts.PlayText(name + "trả lời: "+ message);
@@ -111,7 +113,9 @@ namespace Legross.ChatClient
         }
         private void Sent()
         {
-            messageHub.Send("LegrossChat", ChatMessage);
+            //InitialDirectLine();
+
+            messageHub.Send("LegrossChat", ChatMessage, ConversationId);
             //todo: loging here
             
             RichTextBoxConsoleText += String.Format("{0}: {1}\r", "ChatClient", ChatMessage);
@@ -223,6 +227,46 @@ namespace Legross.ChatClient
             get
             {
                 return recorder.SampleAggregator;
+            }
+        }
+        void DoSpeechRecognition()
+        {
+            // Create an in-process speech recognizer for the en-US locale.
+            using (
+            SpeechRecognitionEngine recognizer =
+              new SpeechRecognitionEngine(
+                new System.Globalization.CultureInfo("de-DE")))
+            {
+
+                // Create and load a dictation grammar.
+                recognizer.LoadGrammar(new DictationGrammar());
+
+                // Add a handler for the speech recognized event.
+                recognizer.SpeechRecognized +=
+                  new EventHandler<SpeechRecognizedEventArgs>(Recognizer_SpeechRecognized);
+
+                // Configure input to the speech recognizer.
+                recognizer.SetInputToDefaultAudioDevice();
+
+                // Start asynchronous, continuous speech recognition.
+                recognizer.RecognizeAsync(RecognizeMode.Multiple);
+            }
+        }
+        void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            //log
+            //Console.WriteLine("Recognized text: " + e.Result.Text);
+            if (e.Result.Text.Equals("Answer"))
+            {
+                beginRecordingCommand.Execute(null);
+            }
+            if (e.Result.Text.Equals("Finish"))
+            {
+                stopCommand.Execute(null);
+            }
+            if (e.Result.Text.Equals("Send"))
+            {
+                sendMessageCommand.Execute(null);
             }
         }
     }

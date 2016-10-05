@@ -13,32 +13,58 @@ using Microsoft.ServiceBus.Messaging;
 using Legross.Hubs;
 using Microsoft.AspNet.SignalR;
 using System.Configuration;
+using System.Collections.Generic;
 
 namespace Legross
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        private ConnectorClient connector;
         private static HubClient hubClient;
-        private static string serviceUrl;
-        private Activity act = new Activity();
         static string ClientId = ConfigurationManager.AppSettings["ClientId"];
+        static string serviceUrl;
+        static string conversationId;
+        static string botId;
+        static string botName;
+        static string recipientId;
+        static string recipientName;
+        static string channelId;
+
         public MessagesController()
         {
             if (hubClient == null)
             {
                 hubClient = new HubClient();
                 hubClient.SignIn("testAccount");
-                hubClient.OnCallBack = (string who, string message) => OnHubCallBack(who, message);
-                serviceUrl = string.Empty;
+                hubClient.OnCallBack = (string who, string message, string conId) => OnHubCallBack(who, message, conId);
+                //serviceUrl = string.Empty;
             }
         }
-        void OnHubCallBack(string who, string message)
+        void OnHubCallBack(string who, string message, string conId)
         {
-            var clientConnector = new ConnectorClient(new Uri(serviceUrl));
-            var replyMessage = act.CreateReply(message);
-            connector.Conversations.ReplyToActivityAsync(replyMessage);
+            var connector = new ConnectorClient(new Uri(serviceUrl));
+
+            var conversation = new ConversationAccount(true, conversationId);
+            var botAccount = new ChannelAccount(botId, botName);
+
+            IMessageActivity replyMessage = Activity.CreateMessageActivity();
+            replyMessage.From = botAccount;
+            replyMessage.Conversation = conversation;
+            replyMessage.ChannelId = channelId;
+            replyMessage.Recipient = new ChannelAccount(recipientId, recipientName);
+            replyMessage.Text = message;
+            connector.Conversations.SendToConversation((Activity)replyMessage);
+            //var myConnector = new ConnectorClient(new Uri(serviceUrl));
+            //IMessageActivity newMessage = Activity.CreateMessageActivity();
+            //newMessage.Type = ActivityTypes.Message;
+            //newMessage.From = botAccount;
+            //newMessage.Conversation = conversation;
+            //newMessage.Recipient = new ChannelAccount("reply from bo");
+            //newMessage.Text = "Yo yo yo!";
+            //await connector.Conversations.SendToConversationAsync((Activity)newMessage);
+
+
+            //var clientConnector = new ConnectorClient(new Uri(serviceUrl));
             //int length = (activity.Text ?? string.Empty).Length;
             //Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
             //await connector.Conversations.ReplyToActivityAsync(reply);
@@ -51,23 +77,29 @@ namespace Legross
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                act = activity;
-                serviceUrl = activity.ServiceUrl;
-                connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+                //serviceUrl = activity.ServiceUrl;
+                var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
                 // calculate something for us to return
-
                 try
                 {
                     //send broadcast to client
 
                     //var context = GlobalHost.ConnectionManager.GetHubContext<MessageHub>();
                     //context.Clients.All.SendChatMessage("ChatClient", activity.Text);
-                    hubClient.Send(activity.Text, "ChatClient");
+                    hubClient.Send("ChatClient", activity.Text, conversationId);
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
+                serviceUrl = activity.ServiceUrl;
+                conversationId = activity.Conversation.Id;
+                botId = activity.Recipient.Id;
+                botName = activity.Recipient.Name;
+                recipientId = activity.From.Id;
+                recipientName = activity.From.Name;
+                channelId = activity.ChannelId;
+
                 // return our reply to the user
                 await ResponseReplyMessage(connector, activity);
             }
@@ -81,6 +113,7 @@ namespace Legross
         private async Task ResponseReplyMessage(ConnectorClient connector, Activity activity)
         {
             int length = (activity.Text ?? string.Empty).Length;
+
             Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
             await connector.Conversations.ReplyToActivityAsync(reply);
         }
