@@ -143,6 +143,15 @@
       <DependentUpon>AutoTuneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoTuneViewModel.cs" />
+    <Compile Include="Controls\DropShadowTextBlock.cs" />
+    <Compile Include="Controls\ToggleSwitch\Borders\ClippingBorder.cs" />
+    <Compile Include="Controls\ToggleSwitch\Borders\InnerGlowBorder.cs" />
+    <Compile Include="Controls\ToggleSwitch\Borders\OuterGlowBorder.cs" />
+    <Compile Include="Controls\ToggleSwitch\HorizontalToggleSwitch.cs" />
+    <Compile Include="Controls\ToggleSwitch\ToggleSwitchBase.cs" />
+    <Compile Include="Controls\ToggleSwitch\Utils\ActualSizePropertyProxy.cs" />
+    <Compile Include="Controls\ToggleSwitch\Utils\HelperExtensions.cs" />
+    <Compile Include="Controls\VerticalToggleSwitch.cs" />
     <Compile Include="Extension\FocusExtension.cs" />
     <Compile Include="Helper\GoogleTranscribeAsync.cs" />
     <Compile Include="Helper\GoogleTts.cs" />
@@ -161,6 +170,8 @@
     </Compile>
     <Compile Include="SaveViewModel.cs" />
     <Compile Include="ShuttingDownMessage.cs" />
+    <Compile Include="Utils\CornerRadiusValueConverter.cs" />
+    <Compile Include="Utils\ScalarValueConverter.cs" />
     <Compile Include="VoiceRecorderState.cs" />
     <Compile Include="WelcomeView.xaml.cs">
       <DependentUpon>WelcomeView.xaml</DependentUpon>
@@ -169,6 +180,10 @@
     <Page Include="AutoTuneView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ToggleSwitch\Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -189,6 +204,10 @@
     <Page Include="SaveView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ToggleSwitchStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WelcomeView.xaml">
       <SubType>Designer</SubType>
@@ -244,6 +263,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Controls\ToggleSwitch\Icons\ToggleSwitch.HorizontalToggleSwitch.Expression.Large.png" />
+    <Resource Include="Controls\ToggleSwitch\Icons\ToggleSwitch.HorizontalToggleSwitch.Expression.Small.png" />
+    <Resource Include="Controls\ToggleSwitch\Icons\ToggleSwitch.HorizontalToggleSwitch.VisualStudio.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

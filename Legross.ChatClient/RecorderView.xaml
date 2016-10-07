@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Legross.ChatClient.RecorderView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ToggleSwitch="clr-namespace:Legross.ChatClient.Controls.ToggleSwitch"
               xmlns:my="clr-namespace:Legross.Audio.Core;assembly=Legross.Audio.Core" Height="552" Width="517" MinWidth="517" MinHeight="552">
     <UserControl.Resources>
         <Style x:Key="{x:Type ProgressBar}"
@@ -46,6 +47,7 @@
                 <TextBox x:Name="TextBoxMessage" Text="{Binding ChatMessage}" Height="20" TextWrapping="Wrap" Margin="0,0,80,0" HorizontalAlignment="Stretch"/>
                 <Button x:Name="ButtonSend" Command="{Binding SendMessageCommand}" Content="Send" Width="75" Height="20" IsDefault="True" IsEnabled="{Binding ButtonSendEnabled}" HorizontalAlignment="Right"/>
             </Grid>
+           
             <TextBlock x:Name="RichTextBoxConsole" Text="{Binding RichTextBoxConsoleText}" HorizontalAlignment="Left" Height="200" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,10" ></TextBlock>
             <!--<RichTextBox x:Name="RichTextBoxConsole" hp:RichTextBoxHelper.DocumentXaml="{Binding RichTextBoxConsoleText}" HorizontalAlignment="Left" Height="461" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,10" IsReadOnly="True"/>-->
             <Label Margin="5">Check the levels before starting recording:</Label>
@@ -61,6 +63,10 @@
                 </Border>
             </StackPanel>
             <my:PolygonWaveFormControl Margin="5" Height="40" SampleAggregator="{Binding SampleAggregator}" IsEnabled="{Binding ShowWaveForm}" />
+
+            <ToggleSwitch:HorizontalToggleSwitch 
+                            IsChecked="{Binding HotkeyToggleSwitched,Mode=TwoWay}" 
+                            Margin="0,0,0,10"/>
         </StackPanel>
 
     </StackPanel>
